@@ -101,6 +101,7 @@ pub(crate) trait EventFormatDeserializer {
             attributes,
             data,
             extensions,
+            _private: (),
         })
     }
 }

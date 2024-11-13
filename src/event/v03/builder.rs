@@ -65,6 +65,35 @@ impl EventBuilder {
         self
     }
 
+    pub fn attributes(mut self, attributes: Attributes) -> Self {
+        let v03 = match attributes.into_v03() {
+            Attributes::V03(attr) => attr,
+            // This branch is unreachable because into_v03() returns
+            // always a Attributes::V03
+            _ => unreachable!(),
+        };
+
+        let AttributesV03 {
+            id,
+            ty,
+            source,
+            datacontenttype,
+            schemaurl,
+            subject,
+            time,
+        } = v03;
+
+        self.id = Some(id);
+        self.ty = Some(ty);
+        self.source = Some(source);
+        self.datacontenttype = datacontenttype;
+        self.schemaurl = schemaurl;
+        self.subject = subject;
+        self.time = time;
+
+        self
+    }
+
     pub fn extension(
         mut self,
         extension_name: &str,
@@ -72,6 +101,11 @@ impl EventBuilder {
     ) -> Self {
         self.extensions
             .insert(extension_name.to_owned(), extension_value.into());
+        self
+    }
+
+    pub fn extensions(mut self, extensions: HashMap<String, ExtensionValue>) -> Self {
+        self.extensions = extensions;
         self
     }
 
@@ -176,6 +210,7 @@ impl crate::event::builder::EventBuilder for EventBuilder {
                 }),
                 data: self.data,
                 extensions: self.extensions,
+                _private: (),
             }),
         }
     }

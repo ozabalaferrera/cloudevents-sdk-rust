@@ -182,13 +182,18 @@ mod tests {
 
     #[test]
     fn message_v03_roundtrip_binary() -> Result<()> {
-        //TODO this code smells because we're missing a proper way in the public APIs
-        // to destructure an event and rebuild it
-        let wanna_be_expected = fixtures::v03::full_json_data();
-        let data: serde_json::Value = wanna_be_expected.data().unwrap().clone().try_into()?;
-        let bytes = serde_json::to_vec(&data)?;
-        let expected = EventBuilderV03::from(wanna_be_expected.clone())
-            .data(wanna_be_expected.datacontenttype().unwrap(), bytes)
+        let Event {
+            attributes,
+            data,
+            extensions,
+            ..
+        } = fixtures::v03::full_json_data();
+        let bytes: Vec<u8> = data.unwrap().try_into()?;
+
+        let expected = EventBuilderV03::new()
+            .attributes(attributes)
+            .extensions(extensions)
+            .data_without_content_type(bytes)
             .build()
             .unwrap();
 
@@ -217,18 +222,18 @@ mod tests {
 
     #[test]
     fn message_v10_roundtrip_binary() -> Result<()> {
-        //TODO this code smells because we're missing a proper way in the public APIs
-        // to destructure an event and rebuild it
-        let wanna_be_expected = fixtures::v10::full_json_data();
-        let data: serde_json::Value = wanna_be_expected
-            .data()
-            .cloned()
-            .unwrap()
-            .try_into()
-            .unwrap();
-        let bytes = serde_json::to_vec(&data)?;
-        let expected = EventBuilderV10::from(wanna_be_expected.clone())
-            .data(wanna_be_expected.datacontenttype().unwrap(), bytes)
+        let Event {
+            attributes,
+            data,
+            extensions,
+            ..
+        } = fixtures::v10::full_json_data();
+        let bytes: Vec<u8> = data.unwrap().try_into()?;
+
+        let expected = EventBuilderV10::new()
+            .attributes(attributes)
+            .extensions(extensions)
+            .data_without_content_type(bytes)
             .build()
             .unwrap();
 

@@ -77,9 +77,10 @@ use url::Url;
 /// ```
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct Event {
-    pub(crate) attributes: Attributes,
-    pub(crate) data: Option<Data>,
-    pub(crate) extensions: HashMap<String, ExtensionValue>,
+    pub attributes: Attributes,
+    pub data: Option<Data>,
+    pub extensions: HashMap<String, ExtensionValue>,
+    pub(crate) _private: (),
 }
 
 #[delegate(self.attributes)]
@@ -115,6 +116,7 @@ impl Default for Event {
             attributes: Attributes::V10(AttributesV10::default()),
             data: None,
             extensions: HashMap::default(),
+            _private: (),
         }
     }
 }
